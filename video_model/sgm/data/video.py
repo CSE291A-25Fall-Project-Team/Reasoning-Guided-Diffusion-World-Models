@@ -221,6 +221,7 @@ class VideoDataset(Dataset):
                     task_description = json.loads(self.hdf5_datasets[task_index]['data'][demo_key].attrs['ep_meta'])['lang']
                     try:
                         steps = self.planner.plan_steps(task_description)["steps"]
+                        steps  = ". ".join(steps)
                     except Exception as e:
                         print("Couldn't generate steps, therefore steps dict will be original task instruction, error:", e)
                         steps = task_description
