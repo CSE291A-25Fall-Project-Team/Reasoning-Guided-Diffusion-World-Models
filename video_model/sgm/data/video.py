@@ -225,9 +225,9 @@ class VideoDataset(Dataset):
                     except Exception as e:
                         print("Couldn't generate steps, therefore steps dict will be original task instruction, error:", e)
                         steps = task_description
-                    task_description_with_steps = open_clip.tokenize([steps]) # returns torch.Size([1, 77])
+                    #task_description_with_steps = open_clip.tokenize([steps]) # returns torch.Size([1, 77])
                     # if steps != None:
-                    task_description_with_steps_tokenized = open_clip.tokenize(task_description_with_steps)
+                    task_description_with_steps_tokenized = open_clip.tokenize(steps)
                     # else:
                     #     steps_tokenized = steps
                     demo_steps = range(0, task_data[demo_key]['actions'].shape[0])
