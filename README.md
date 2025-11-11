@@ -3,15 +3,17 @@
 1. git clone cyclereward's repo
 2. Change the ...med.py to the folllowing:
    - replace
-      `from transformers.modeling_utils import (
+      `
+     from transformers.modeling_utils import (
         PreTrainedModel,
         apply_chunking_to_forward,
         find_pruneable_heads_and_indices,
         prune_linear_layer,
-    )`
+       )
+     `
    - use:
-      `import torch
-      
+      `
+      import torch
       try:
           # Old versions (Transformers <=4.43)
           from transformers.modeling_utils import (
@@ -44,4 +46,5 @@
               new_layer.weight.data = W.contiguous()
               if layer.bias is not None:
                   new_layer.bias.data = b.contiguous()
-              return new_layer`
+              return new_layer
+     `
