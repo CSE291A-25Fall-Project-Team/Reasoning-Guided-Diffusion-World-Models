@@ -3,16 +3,16 @@
 1. git clone cyclereward's repo
 2. Change the ...med.py to the folllowing:
    - replace
-      `
+      ```
      from transformers.modeling_utils import (
         PreTrainedModel,
         apply_chunking_to_forward,
         find_pruneable_heads_and_indices,
         prune_linear_layer,
        )
-     `
+     ```
    - use:
-      `
+      ```
       import torch
       try:
           # Old versions (Transformers <=4.43)
@@ -47,4 +47,4 @@
               if layer.bias is not None:
                   new_layer.bias.data = b.contiguous()
               return new_layer
-     `
+     ```
