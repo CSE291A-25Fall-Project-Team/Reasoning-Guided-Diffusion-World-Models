@@ -12,3 +12,4 @@ python robocasa/robocasa/scripts/setup_macros.py
 
 cd ..
 pip install -r requirements.txt
+pip install -U google-genai
