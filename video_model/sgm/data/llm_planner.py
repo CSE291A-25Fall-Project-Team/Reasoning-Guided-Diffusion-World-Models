@@ -283,8 +283,19 @@ class OnlinePlanner:
         #     + "\n\nReturn ONLY the JSON object.\n"
         #     + ICL.strip()
         # )
-        resp = self.client.models.generate_content(model=self.model, contents=user_msg)
-        text = getattr(resp, "text", None) or getattr(resp, "output_text", None) or str(resp)
-        parsed = parse_steps_output(text, min_steps=min_steps, max_steps=max_steps)
-        self.cache.put(key, parsed)
-        return parsed
+        max_try = 3
+        while max_try > 0:
+            try:
+                resp = self.client.models.generate_content(model=self.model, contents=user_msg)
+                text = getattr(resp, "text", None) or getattr(resp, "output_text", None) or str(resp)
+                parsed = parse_steps_output(text, min_steps=min_steps, max_steps=max_steps)
+                self.cache.put(key, parsed)
+                return parsed
+            except:
+                max_try -= 1
+
+if __name__ == "__main__":
+    planner = OnlinePlanner()
+    instruction = "Chop the potatoes"
+    resp = planner.plan_steps(instruction=instruction)
+    print(resp)

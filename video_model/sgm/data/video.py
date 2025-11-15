@@ -122,6 +122,12 @@ SINGLE_STAGE_TASK_DATASETS = OrderedDict(
     ),
     ExampleEnvironmentData="datasets/v0.1/single_stage/demo_gentex_im128_randcams_env.pkl"
 )
+for env in SINGLE_STAGE_TASK_DATASETS:
+    if env == "ExampleEnvironmentData":
+        SINGLE_STAGE_TASK_DATASETS[env] = "/home/hanan/videopolicy/video_model/" + SINGLE_STAGE_TASK_DATASETS[env]
+    else:
+        SINGLE_STAGE_TASK_DATASETS[env]['human_path'] = "/home/hanan/videopolicy/video_model/" + SINGLE_STAGE_TASK_DATASETS[env]['human_path']
+
 
 def get_new_ds_path(task, ds_type, return_info=False):
     if task in SINGLE_STAGE_TASK_DATASETS:
@@ -467,4 +473,25 @@ class VideoDatasetModule(pl.LightningDataModule):
             shuffle=self.shuffle,
             collate_fn=collate_fn,
         )
+
+if __name__ == "__main__":
+    from omegaconf import OmegaConf
+    config = OmegaConf.load("../../scripts/sampling/configs/svd_xt.yaml")
+    
+    dataset = VideoDataset(
+        n_frames=config.data.params.n_frames,
+        cond_aug=config.data.params.cond_aug,
+        motion_bucket_id=config.data.params.motion_bucket_id,
+        fps_id=config.data.params.fps_id,
+        frame_width=config.data.params.frame_width,
+        frame_height=config.data.params.frame_height,
+        tasks=config.data.params.tasks,
+        skip_demos=config.data.params.skip_demos,
+        video_stride=config.data.params.video_stride,
+        video_pred_horizon=config.data.params.video_pred_horizon,
+        aug=config.data.params.aug,
+        action_dim=config.data.params.action_dim,
+        swap_rgb=config.data.params.swap_rgb,
+        mode=config.data.params.mode,
+    )
 
