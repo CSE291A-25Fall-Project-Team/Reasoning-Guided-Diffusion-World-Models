@@ -166,52 +166,52 @@ data:
     frame_height: 256
     tasks:
 
-      PnPCabToCounter:
-        num_experiments: 50
-      PnPCounterToCab:
-        num_experiments: 50
-      PnPCounterToMicrowave:
-        num_experiments: 50
-      PnPCounterToSink:
-        num_experiments: 50
-      PnPCounterToStove:
-        num_experiments: 50
-      PnPMicrowaveToCounter:
-        num_experiments: 50
-      PnPSinkToCounter:
-        num_experiments: 50
-      PnPStoveToCounter:
-        num_experiments: 50
+      # PnPCabToCounter:
+      #   num_experiments: 50
+      # PnPCounterToCab:
+      #   num_experiments: 50
+      # PnPCounterToMicrowave:
+      #   num_experiments: 50
+      # PnPCounterToSink:
+      #   num_experiments: 50
+      # PnPCounterToStove:
+      #   num_experiments: 50
+      # PnPMicrowaveToCounter:
+      #   num_experiments: 50
+      # PnPSinkToCounter:
+      #   num_experiments: 50
+      # PnPStoveToCounter:
+      #   num_experiments: 50
 
-      TurnOffMicrowave:
-        num_experiments: 50
-      TurnOnMicrowave:
-        num_experiments: 50
-      TurnOffSinkFaucet:
-        num_experiments: 50
-      TurnOnSinkFaucet:
-        num_experiments: 50
-      TurnSinkSpout:
-        num_experiments: 50
-      TurnOffStove:
-        num_experiments: 50
-      TurnOnStove:
-        num_experiments: 50
+      # TurnOffMicrowave:
+      #   num_experiments: 50
+      # TurnOnMicrowave:
+      #   num_experiments: 50
+      # TurnOffSinkFaucet:
+      #   num_experiments: 50
+      # TurnOnSinkFaucet:
+      #   num_experiments: 50
+      # TurnSinkSpout:
+      #   num_experiments: 50
+      # TurnOffStove:
+      #   num_experiments: 50
+      # TurnOnStove:
+      #   num_experiments: 50
 
-      CoffeePressButton:
-        num_experiments: 50
-      CoffeeServeMug:
-        num_experiments: 50
-      CoffeeSetupMug:
-        num_experiments: 50
-      CloseDoubleDoor:
-        num_experiments: 50
-      CloseSingleDoor:
-        num_experiments: 50
-      OpenDoubleDoor:
-        num_experiments: 50
-      OpenSingleDoor:
-        num_experiments: 50
+      # CoffeePressButton:
+      #   num_experiments: 50
+      # CoffeeServeMug:
+      #   num_experiments: 50
+      # CoffeeSetupMug:
+      #   num_experiments: 50
+      # CloseDoubleDoor:
+      #   num_experiments: 50
+      # CloseSingleDoor:
+      #   num_experiments: 50
+      # OpenDoubleDoor:
+      #   num_experiments: 50
+      # OpenSingleDoor:
+      #   num_experiments: 50
       CloseDrawer:
         num_experiments: 50
       OpenDrawer:

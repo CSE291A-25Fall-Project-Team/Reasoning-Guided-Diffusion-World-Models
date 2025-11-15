@@ -122,11 +122,11 @@ SINGLE_STAGE_TASK_DATASETS = OrderedDict(
     ),
     ExampleEnvironmentData="datasets/v0.1/single_stage/demo_gentex_im128_randcams_env.pkl"
 )
-for env in SINGLE_STAGE_TASK_DATASETS:
-    if env == "ExampleEnvironmentData":
-        SINGLE_STAGE_TASK_DATASETS[env] = "/home/hanan/videopolicy/video_model/" + SINGLE_STAGE_TASK_DATASETS[env]
-    else:
-        SINGLE_STAGE_TASK_DATASETS[env]['human_path'] = "/home/hanan/videopolicy/video_model/" + SINGLE_STAGE_TASK_DATASETS[env]['human_path']
+# for env in SINGLE_STAGE_TASK_DATASETS:
+#     if env == "ExampleEnvironmentData":
+#         SINGLE_STAGE_TASK_DATASETS[env] = "/home/hanan/videopolicy/video_model/" + SINGLE_STAGE_TASK_DATASETS[env]
+#     else:
+#         SINGLE_STAGE_TASK_DATASETS[env]['human_path'] = "/home/hanan/videopolicy/video_model/" + SINGLE_STAGE_TASK_DATASETS[env]['human_path']
 
 
 def get_new_ds_path(task, ds_type, return_info=False):
