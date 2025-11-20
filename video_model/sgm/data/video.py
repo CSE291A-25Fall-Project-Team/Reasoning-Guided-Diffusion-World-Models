@@ -122,6 +122,12 @@ SINGLE_STAGE_TASK_DATASETS = OrderedDict(
     ),
     ExampleEnvironmentData="datasets/v0.1/single_stage/demo_gentex_im128_randcams_env.pkl"
 )
+# for env in SINGLE_STAGE_TASK_DATASETS:
+#     if env == "ExampleEnvironmentData":
+#         SINGLE_STAGE_TASK_DATASETS[env] = "/home/hanan/videopolicy/video_model/" + SINGLE_STAGE_TASK_DATASETS[env]
+#     else:
+#         SINGLE_STAGE_TASK_DATASETS[env]['human_path'] = "/home/hanan/videopolicy/video_model/" + SINGLE_STAGE_TASK_DATASETS[env]['human_path']
+
 
 def get_new_ds_path(task, ds_type, return_info=False):
     if task in SINGLE_STAGE_TASK_DATASETS:
@@ -208,7 +214,13 @@ class VideoDataset(Dataset):
                         continue
 
                     task_description = json.loads(self.hdf5_datasets[task_index]['data'][demo_key].attrs['ep_meta'])['lang'] 
-                    task_description = open_clip.tokenize([task_description]) # returns torch.Size([1, 77])
+                    try:
+                        steps = self.planner.plan_steps(task_description)["steps"]
+                        steps  = ". ".join(steps)
+                    except Exception as e:
+                        print("Couldn't generate steps, therefore steps dict will be original task instruction, error:", e)
+                        steps = task_description
+                    task_description = open_clip.tokenize([steps]) # returns torch.Size([1, 77])
 
                     demo_steps = range(0, task_data[demo_key]['actions'].shape[0])
                     for demo_step in demo_steps:
@@ -232,7 +244,7 @@ class VideoDataset(Dataset):
                     #     steps_tokenized = steps
                     demo_steps = range(0, task_data[demo_key]['actions'].shape[0])
                     for demo_step in demo_steps:
-                        self.indexed_demos.append((task_name, task_index, demo_key, demo_step, task_description_with_steps_tokenized))
+                        self.indexed_demos.append((task_name, task_index, demo_key, demo_step, task_description_with_steps_tokenized,[steps]))
 
         
         all_relative_actions = []
@@ -338,7 +350,7 @@ class VideoDataset(Dataset):
     def __getitem__(self, i):
 
         try:
-            task_name, task_index, demo_key, demo_step, task_description = self.indexed_demos[i]
+            task_name, task_index, demo_key, demo_step, task_description, task_string = self.indexed_demos[i]
             relative_actions = self.hdf5_datasets[task_index]['data'][demo_key]['actions'][demo_step:demo_step+self.video_pred_horizon*self.video_stride][:, 0:self.action_dim]
             
             pad_size = self.video_pred_horizon*self.video_stride - relative_actions.shape[0]
@@ -425,6 +437,7 @@ class VideoDataset(Dataset):
             "cond_frames_3": cond_frames_3.astype(np.float32),
             "cond_frames_4": cond_frames_4.astype(np.float32),
             "cond_frames_without_noise": cond_frames_without_noise,
+            "task_string": task_string,
             "cond_aug": cond_aug.astype(np.float32),
             "motion_bucket_id": motion_bucket_id,
             "fps_id": fps_id,
@@ -435,11 +448,88 @@ class VideoDataset(Dataset):
     def __len__(self):
         return len(self.indexed_demos)
 
+# def collate_fn(example_list):
+#     collated = default_collate(example_list)
+#     batch = {k: rearrange(v, "b t ... -> (b t) ...") for (k, v) in collated.items()}
+#     batch["num_video_frames"] = 25
+#     batch["num_pose_frames"] = 32
+#     return batch
+
+
+
+from torch.utils.data.dataloader import default_collate
+from einops import rearrange
+import torch
+import numpy as np
+from itertools import chain
+
+def _to_str(x):
+    # task_string can be str or list/tuple[str]; normalize to a single string
+    if isinstance(x, (list, tuple)):
+        return " ".join(map(str, x))
+    return str(x)
+
 def collate_fn(example_list):
+    # normalize task_string before default_collate so it becomes a simple list[str]
+    for ex in example_list:
+        if "task_string" in ex:
+            ex["task_string"] = _to_str(ex["task_string"])
+
     collated = default_collate(example_list)
-    batch = {k: rearrange(v, "b t ... -> (b t) ...") for (k, v) in collated.items()}
-    batch["num_video_frames"] = 25
-    batch["num_pose_frames"] = 32
+
+    # infer (B, T) from a time-shaped tensor, prefer "jpg"
+    if "jpg" in collated and isinstance(collated["jpg"], torch.Tensor):
+        B, T = collated["jpg"].shape[:2]
+    else:
+        # fallback: try any tensor with ndim>=2
+        any_key = next(k for k, v in collated.items()
+                       if isinstance(v, torch.Tensor) and v.ndim >= 2)
+        B, T = collated[any_key].shape[:2]
+
+    batch = {}
+
+    for k, v in collated.items():
+        # tensors
+        if isinstance(v, torch.Tensor):
+            if v.ndim >= 2:
+                # has (B, T, ...) -> flatten to (B*T, ...)
+                batch[k] = rearrange(v, "b t ... -> (b t) ...")
+            elif v.ndim == 1 and v.shape[0] == B:
+                # per-sample metadata -> repeat across time to length B*T
+                batch[k] = v.repeat_interleave(T, dim=0)
+            else:
+                # leave scalars or unexpected shapes alone
+                batch[k] = v
+            continue
+
+        # numpy arrays
+        if isinstance(v, np.ndarray):
+            vt = torch.from_numpy(v)
+            if vt.ndim >= 2:
+                batch[k] = rearrange(vt, "b t ... -> (b t) ...")
+            elif vt.ndim == 1 and vt.shape[0] == B:
+                batch[k] = vt.repeat(T)
+            else:
+                batch[k] = vt
+            continue
+
+        # strings / lists / tuples
+        if k == "task_string":
+            # v is a list[str] of length B -> expand to length B*T
+            # (["do X", "do Y"] -> ["do X"]*T + ["do Y"]*T)
+            per_clip = list(map(_to_str, v))
+            batch[k] = list(chain.from_iterable([[s] * T for s in per_clip]))
+        else:
+            # leave other non-array fields as-is
+            batch[k] = v
+
+    batch["num_video_frames"] = int(T)
+    # if you need pose frames too:
+    if "pose" in collated and isinstance(collated["pose"], torch.Tensor):
+        batch["num_pose_frames"] = int(collated["pose"].shape[1])
+    else:
+        batch["num_pose_frames"] = int(T)
+
     return batch
 
 
@@ -468,3 +558,5 @@ class VideoDatasetModule(pl.LightningDataModule):
             collate_fn=collate_fn,
         )
 
+if __name__ == "__main__":
+    print(SINGLE_STAGE_TASK_DATASETS['PnPCounterToCab']['human_path'])

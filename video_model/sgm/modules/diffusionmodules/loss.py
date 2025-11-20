@@ -15,6 +15,10 @@ from rich import print
 import torch.distributed as dist
 
 import pdb
+from .cyclereward.cyclereward import cyclereward
+from .ddpo_helpers import *
+from PIL import Image
+import os
 
 
 class StandardDiffusionLoss(nn.Module):
@@ -51,6 +55,22 @@ class StandardDiffusionLoss(nn.Module):
         self.batch2model_keys = set(batch2model_keys)
 
         self.use_action_loss = use_action_loss
+        self.cyclereward_model, self.cyclereward_pre = cyclereward(device="cpu", model_type="CycleReward-Combo")
+        
+        self.use_ddpo = True                 # set False to disable
+        self.ddpo_lambda = 0.1               # weight on RL term
+        self.ddpo_steps = 4                  # tiny inner rollout length (cheap!)
+        self.ddpo_frames_for_reward = 3      # how many frames to decode/score
+        self.ddpo_eta = 1.0                  # Euler-Ancestral noise strength
+        self.ddpo_every = 4                  # add RL term on every Nth batch to save time
+        self.adv_ema = EMA(beta=0.9)         # running baseline for advantages
+
+
+
+    def _ensure_cycle_rm_device(self, tensor_on_target_device):
+        want = tensor_on_target_device.device
+        if next(self.cyclereward_model.parameters()).device != want:
+            self.cyclereward_model.to(want)
 
     def get_noised_input(
         self, sigmas_bc: torch.Tensor, noise: torch.Tensor, input: torch.Tensor
@@ -136,11 +156,12 @@ class StandardDiffusionLoss(nn.Module):
             pose_w = append_dims(self.loss_weighting(pose_sigmas), input['pose'].ndim)
             pose_loss_value = self.get_loss(model_output['pose_output'], input['pose'], pose_w)
 
-            loss_value = torch.cat((video_loss_value, pose_loss_value), dim=0)
+            #loss_value = torch.cat((video_loss_value, pose_loss_value), dim=0)
+            loss_value = video_loss_value.mean() + pose_loss_value.mean()
         else:
             loss_value = video_loss_value
 
-        return loss_value
+        return loss_value, sigmas, noised_input, model_output['video_output']
 
     def get_loss(self, model_output, target, w):
         if self.loss_type == "l2":
