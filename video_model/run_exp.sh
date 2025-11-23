@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=. python scripts/sampling/robocasa_experiment.py --config=scripts/sampling/configs/svd_xt.yaml > ./logs/run.log 2>&1 &

@@ -559,4 +559,23 @@ class VideoDatasetModule(pl.LightningDataModule):
         )
 
 if __name__ == "__main__":
-    print(SINGLE_STAGE_TASK_DATASETS['PnPCounterToCab']['human_path'])
+    from omegaconf import OmegaConf
+    config = OmegaConf.load("../../scripts/sampling/configs/svd_xt.yaml")
+    
+    dataset = VideoDataset(
+        n_frames=config.data.params.n_frames,
+        cond_aug=config.data.params.cond_aug,
+        motion_bucket_id=config.data.params.motion_bucket_id,
+        fps_id=config.data.params.fps_id,
+        frame_width=config.data.params.frame_width,
+        frame_height=config.data.params.frame_height,
+        tasks=config.data.params.tasks,
+        skip_demos=config.data.params.skip_demos,
+        video_stride=config.data.params.video_stride,
+        video_pred_horizon=config.data.params.video_pred_horizon,
+        aug=config.data.params.aug,
+        action_dim=config.data.params.action_dim,
+        swap_rgb=config.data.params.swap_rgb,
+        mode=config.data.params.mode,
+    )
+

@@ -28,6 +28,7 @@ yaml.preserve_quotes = True
 import pdb
 from termcolor import colored
 np.set_printoptions(precision=5, suppress=True)
+from tqdm import tqdm
 
 def create_environment_data_from_yaml(config, output_json_file):
 
@@ -281,7 +282,6 @@ def run_experiment(
     shape = (num_frames, 4, camera_width // 8, camera_height // 8)
 
     for demo in demos:
-
         demo_number = int(demo.replace("demo_", ""))
         env = create_eval_env_modified(env_name=task_name, controller_configs=environment_data['env_kwargs']['controller_configs'], id_selection=demo_number//10)
 
@@ -293,7 +293,7 @@ def run_experiment(
         video_path = f'{log_folder}/{task_name}_{demo}.mp4'
         video_writer = imageio.get_writer(video_path, fps=30)
 
-        for i in range(int(max_traj_len/action_horizon)):
+        for i in tqdm(range(int(max_traj_len/action_horizon)), desc=f"{task_name}: {demo}"):
 
             video_img = []
             for cam_name in camera_names:
@@ -332,7 +332,7 @@ def run_experiment(
             action_pred = np.hstack((action_pred, [[0, 0, 0, 0, -1]] * action_pred.shape[0]))
             action_pred = action_pred[0:action_horizon]
 
-            print(i)
+            # print(i)
 
             for step in range(action_pred.shape[0]):
 
@@ -522,10 +522,11 @@ if __name__ == "__main__":
         mode=config.data.params.mode,
     )
 
-    run_experiment(
-        model=model,
-        dataset=dataset,
-        config=config,
-        filter=filter,
-    )
+    while True:
+        run_experiment(
+            model=model,
+            dataset=dataset,
+            config=config,
+            filter=filter,
+        )
     

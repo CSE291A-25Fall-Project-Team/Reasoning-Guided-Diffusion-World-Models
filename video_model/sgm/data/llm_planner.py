@@ -293,3 +293,9 @@ class OnlinePlanner:
                 return parsed
             except:
                 max_try -= 1
+
+if __name__ == "__main__":
+    planner = OnlinePlanner()
+    instruction = "Chop the potatoes"
+    resp = planner.plan_steps(instruction=instruction)
+    print(resp)
