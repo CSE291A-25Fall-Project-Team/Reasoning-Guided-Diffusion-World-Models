@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Train: Stage 2 (single GPU, GPU 5)",
+        "type": "python",
+        "request": "launch",
+        "program": "video_model/main.py",                  // change to video_model/main.py if that's your entry
+        "cwd": "/home/hanan/dev/videopolicy",
+        "console": "integratedTerminal",
+        "justMyCode": true,
+        "env": {
+          "PYTHONPATH": "/home/hanan/dev/videopolicy/..",
+          "CUDA_VISIBLE_DEVICES": "5"
+        },
+        "args": [
+          "--base=configs/stage_2_action_decoder_training.yaml",
+          "--name=ft1",
+          "--seed=24",
+          "--num_nodes=1",
+          "--wandb=0",
+          "lightning.trainer.devices=0"
+        ]
+      }
+    ]
+  }
+  

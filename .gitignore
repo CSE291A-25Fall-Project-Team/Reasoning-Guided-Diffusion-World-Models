@@ -1,0 +1,14 @@
+video_model/logs
+video_model/checkpoints
+video_model/outputs
+video_model/src
+video_model/experiments
+video_model/datasets
+packages/**
+!packages/.gitkeep
+src
+log_1.txt
+log_2.txt
+log_3.txt
+video_model/sgm/modules/diffusionmodules/cyclereward
+**/__pycache__/
