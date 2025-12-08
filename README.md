@@ -56,7 +56,7 @@ This will run evaluation on one of the 24 tasks defined in `svd_xt.yaml`. To run
 
 ### 🖥️ Compute Success Rate
 
-After running the evaluations, you can run the compute the success rate by running the below script from `video_model` folder with the evaluated json file:
+After running the evaluations, you can compute the success rate by running the below script from `video_model` folder with the evaluated json file:
 
 ```
 python eval_script.py experiments/example_inference/multi_environment_experiment_record.json
