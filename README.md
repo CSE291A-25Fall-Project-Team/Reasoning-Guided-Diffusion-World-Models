@@ -1,21 +1,20 @@
-# Video Generators Are Robot Policies
-### Arxiv 2025
-### [Project Page](https://videopolicy.cs.columbia.edu/) | [Paper](https://videopolicy.cs.columbia.edu/assets/video_policy.pdf) | [ArXiv](https://arxiv.org/abs/2508.00795)
+# Simulate, Reason, Act: Hierarchical Planning with Generative Rollouts
+### CSE-291 Final Project
 
-[Junbang Liang](https://junbangliang.github.io/)<sup>1</sup>, [Pavel Tokmakov](https://pvtokmakov.github.io/home/)<sup>2</sup>, [Ruoshi Liu](https://ruoshiliu.github.io/)<sup>1</sup>, [Sruthi Sudhakar](https://sruthisudhakar.github.io/)<sup>1</sup>, [Paarth Shah](https://www.paarthshah.me/)<sup>2</sup>, [Rares Ambrus](https://www.tri.global/about-us/dr-rares-ambrus/)<sup>2</sup>, [Carl Vondrick](https://www.cs.columbia.edu/~vondrick/)<sup>1</sup>
+[Hanan Gani](https://hananshafi.github.io/), [Tejal Kulkarni](https://scholar.google.com/citations?user=j1Sh_joAAAAJ&hl=en), [Shengxiang Ji](https://scholar.google.com/citations?user=taEqnmcAAAAJ&hl=en) [Yanran Wang](https://www.linkedin.com/in/yanran-wang-38738022b/) [Madhoolika Chodavarapu](https://www.linkedin.com/in/madhoolikac/)
 
-<sup>1</sup>Columbia University, <sup>2</sup>Toyota Research Institute
+ Department of Computer Science, University of California, San Diego
 
-<p align="center">
+<!-- <p align="center">
   <img src="assets/github_teaser.gif" width="80%">
-</p>
+</p> -->
 
 ##  Usage
 ###  🛠️ Install Dependencies
 
 Create environment:
 ```
-git clone https://github.com/cvlab-columbia/videopolicy.git
+git clone https://github.com/CSE291A-25Fall-Project-Team/Reasoning-Guided-Diffusion-World-Models.git
 conda create -n videopolicy python=3.10
 conda activate videopolicy
 ```
@@ -36,53 +35,49 @@ pip install -r requirements.txt
 
 ### 🧾 Download Checkpoints and Datasets
 
-Download pretrained checkpoints and move `checkpoints` under the `video_model` folder:
+Download pretrained checkpoints, extract and move `checkpoints` under the `video_model` folder:
 ```
 wget https://videopolicy.cs.columbia.edu/assets/checkpoints.zip
 ```
-Download simulation dataset and move `datasets` under the `video_model` folder:
+Download simulation dataset, extract and move `datasets` under the `video_model` folder:
 ```
 wget https://videopolicy.cs.columbia.edu/assets/datasets.zip
 ```
 
 ### 🖥️ Run Evaluation
 
-After downloading the pretrained checkpoints amd the simulation dataset, you can run the Robocasa evaluations from the `video_model` folder:
+After downloading the pretrained checkpoints and the simulation dataset, you can run the Robocasa evaluations from the `video_model` folder:
 
 ```
 CUDA_VISIBLE_DEVICES=0 PYTHONPATH=. python scripts/sampling/robocasa_experiment.py --config=scripts/sampling/configs/svd_xt.yaml
 ```
 This will run evaluation on one of the 24 tasks defined in `svd_xt.yaml`. To run on another task, please run this command again on a different gpu.
 
+
+### 🖥️ Compute Success Rate
+
+After running the evaluations, you can run the compute the success rate by running the below script from `video_model` folder with the evaluated json file:
+
+```
+python eval_script.py experiments/example_inference/multi_environment_experiment_record.json
+```
+This will compute and print the success rate for all the completed tasks in the json file.
+
 ### 🚀 Run Training
 
-After downloading the pretrained checkpoints amd the simulation dataset, you can run the stage 1 video model training on Robocasa simualtion dataset from the `video_model` folder:
+Run below command to start the training, adjust the GPUs accordingly
 
 ```
-PYTHONPATH=. CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python main.py --base=configs/stage_1_video_model_training.yaml --name=ft1 --seed=24 --num_nodes=1 --wandb=1 lightning.trainer.devices="0,1,2,3,4,5,6,7"
+PYTHONPATH=. CUDA_VISIBLE_DEVICES=0,1 python main.py --base=configs/joint_training.yaml --name=ft1 --seed=24 --num_nodes=1 --wandb=1 lightning.trainer.devices="0,1"
 ```
 
-Alternatively, you can run the stage 2 action decoder training with the video model frozen from a pretrained checkpoint, or you can modify `stage_2_action_decoder_training.yaml` to train from your stage 1 checkpoints:
-
-```
-PYTHONPATH=. CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python main.py --base=configs/stage_2_action_decoder_training.yaml --name=ft1 --seed=24 --num_nodes=1 --wandb=1 lightning.trainer.devices="0,1,2,3,4,5,6,7"
-```
-
-Also, we provide an example training the video model and action decoder jointly:
-
-```
-PYTHONPATH=. CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python main.py --base=configs/joint_training.yaml --name=ft1 --seed=24 --num_nodes=1 --wandb=1 lightning.trainer.devices="0,1,2,3,4,5,6,7"
-```
-
-Note that this training script is set for an 8-GPU system, each with 80GB of VRAM. Training with an overall batch size of 32 is found to produce good results, and larger batch size tends to improve model performance.
+Larger batch size tends to improve model performance when compute and resources are available.
 
 
 ## 🙏 Acknowledgement
-This repository is based on [Stable Video Diffusion](https://github.com/Stability-AI/generative-models) and [Generative Camera Dolly](https://gcd.cs.columbia.edu/). We would like to thank the authors of these work for publicly releasing their code. 
+This repository is based on [VideoPolicy](https://github.com/cvlab-columbia/videopolicy/tree/master). We would like to thank the authors of these work for publicly releasing their code. 
 
-This research is based on work partially supported by the Toyota Research Institute and the NSF NRI Award #2132519.
-
-
+<!-- 
 ##  Citation
 ```
 @article{liang2025video,
@@ -91,4 +86,4 @@ This research is based on work partially supported by the Toyota Research Instit
   journal={arXiv preprint arXiv:2508.00795},
   year={2025}
 }
-```
+``` -->
