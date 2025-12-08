@@ -5,9 +5,9 @@
 
  Department of Computer Science, University of California, San Diego
 
-<!-- <p align="center">
-  <img src="assets/github_teaser.gif" width="80%">
-</p> -->
+<p align="center">
+  <img src="assets/main_block_diagram.pdf" width="80%">
+</p>
 
 ##  Usage
 ###  🛠️ Install Dependencies
