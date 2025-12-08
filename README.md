@@ -35,9 +35,9 @@ pip install -r requirements.txt
 
 ### 🧾 Download Checkpoints and Datasets
 
-Download pretrained checkpoints, extract and move `checkpoints` under the `video_model` folder:
+Download pretrained checkpoints, move files to `checkpoints` folder under the `video_model` folder:
 ```
-wget https://videopolicy.cs.columbia.edu/assets/checkpoints.zip
+https://huggingface.co/hanangani/rgb-wm-ckpts
 ```
 Download simulation dataset, extract and move `datasets` under the `video_model` folder:
 ```
