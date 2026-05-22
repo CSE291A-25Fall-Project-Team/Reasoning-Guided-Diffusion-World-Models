@@ -1,5 +1,4 @@
 # Simulate, Reason, Act: Hierarchical Planning with Generative Rollouts
-### CSE-291 Final Project
 
 [Hanan Gani](https://hananshafi.github.io/), [Tejal Kulkarni](https://scholar.google.com/citations?user=j1Sh_joAAAAJ&hl=en), [Shengxiang Ji](https://scholar.google.com/citations?user=taEqnmcAAAAJ&hl=en), [Yanran Wang](https://www.linkedin.com/in/yanran-wang-38738022b/), [Madhoolika Chodavarapu](https://www.linkedin.com/in/madhoolikac/)
 
