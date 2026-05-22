@@ -6,8 +6,9 @@
  Department of Computer Science, University of California, San Diego
  
  ## Demo video
- ![Demo GIF](demo.gif)
-
+ <div align="center">
+  <img width="450" height="300" alt="Pick and place cabinet to counter demo" src="https://github.com/user-attachments/assets/04ecb736-1465-4741-b36b-b25ad6b7fe0a" />
+ </div>
  
 ## Architecture
 <p align="center">
