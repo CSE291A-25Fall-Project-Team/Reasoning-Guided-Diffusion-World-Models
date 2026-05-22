@@ -3,6 +3,7 @@
 [Hanan Gani*](https://hananshafi.github.io/), [Tejal Kulkarni*](https://scholar.google.com/citations?user=j1Sh_joAAAAJ&hl=en), [Madhoolika Chodavarapu*](https://www.linkedin.com/in/madhoolikac/)
 
  *Equal contribution 
+ 
  Department of Computer Science, University of California, San Diego
  
  ## Demo video
