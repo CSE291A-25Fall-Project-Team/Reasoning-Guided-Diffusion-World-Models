@@ -3,9 +3,13 @@
 [Hanan Gani*](https://hananshafi.github.io/), [Tejal Kulkarni*](https://scholar.google.com/citations?user=j1Sh_joAAAAJ&hl=en), [Madhoolika Chodavarapu*](https://www.linkedin.com/in/madhoolikac/)
 
  *Equal contribution 
- [![Watch demo video!](https://img.youtube.com/vi/UMC-uqI0xSg/maxresdefault.jpg)](https://youtu.be/UMC-uqI0xSg)
  Department of Computer Science, University of California, San Diego
+ 
+ ## Demo video
+ ![Demo GIF](demo.gif)
 
+ 
+## Architecture
 <p align="center">
   <img src="assets/main_block_diagram.png" width="80%">
 </p>
